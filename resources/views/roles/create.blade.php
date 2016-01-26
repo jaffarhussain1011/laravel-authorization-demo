@@ -26,6 +26,14 @@
                             <label for="slug">Slug</label>
                             <input type="text" class="form-control" id="slug" placeholder="Slug" name="slug" value="{{ old('slug') }}">
                         </div>
+                        <div class="form-group">
+                            <label for="permissions">Permissions</label>
+                            <select multiple="true" id="permissions" name="permissions[]" class="form-control">
+                                @foreach($pList as $key=>$val)
+                                <option value="{{$key}}">{{$val}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <button type="submit" class="btn btn-default">Submit</button>
                     </form>
                 </div>

@@ -3,20 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class RoleController extends Controller
-{
+class RoleController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        return view('roles.index',  ['roles'=>\App\Models\Role::paginate(15)]);
+    public function index() {
+        $this->authorize('index', new \App\Models\Role);
+        return view('roles.index', ['roles' => \App\Models\Role::paginate(15)]);
     }
 
     /**
@@ -24,9 +23,10 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        return view('roles.create');
+    public function create() {
+        $this->authorize('create', new \App\Models\Role);
+        $list = \App\Models\Permission::lists('title', 'id');
+        return view('roles.create', ['pList' => $list]);
     }
 
     /**
@@ -35,9 +35,9 @@ class RoleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(\App\Http\Requests\StoreRolePostRequest $request)
-    {
-        $role = \App\Models\Role::create($request->only(['title','slug']));
+    public function store(\App\Http\Requests\StoreRolePostRequest $request) {
+        $this->authorize('create', new \App\Models\Role);
+        $role = \App\Models\Role::create($request->only(['title', 'slug']))->permissions()->sync($request->get('permissions'));
         return redirect(route('role.index'));
     }
 
@@ -47,8 +47,7 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         
     }
 
@@ -58,10 +57,12 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function edit($id) {
         $role = \App\Models\Role::findOrFail($id);
-        return view('roles.edit',['role'=>$role]);
+        $this->authorize('update', $role);
+        $list = \App\Models\Permission::lists('title', 'id');
+//        dd($role->permissions()->lists('id'));
+        return view('roles.edit', ['pList' => $list, 'role' => $role]);
     }
 
     /**
@@ -71,11 +72,12 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(\App\Http\Requests\UpdateRolePostRequest $request, $id)
-    {
+    public function update(\App\Http\Requests\UpdateRolePostRequest $request, $id) {
         $role = \App\Models\Role::findOrFail($id);
-        $role->fill($request->only(['title','slug']));
+        $this->authorize('update', $role);
+        $role->fill($request->only(['title', 'slug']));
         $role->save();
+        $role->permissions()->sync($request->get('permissions'));
         return redirect(route('role.index'));
     }
 
@@ -85,10 +87,11 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id) {
         $role = \App\Models\Role::findOrFail($id);
+        $this->authorize('destroy', $role);
         $role->delete();
         return redirect(route('role.index'));
     }
+
 }

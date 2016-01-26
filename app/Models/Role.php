@@ -16,9 +16,9 @@ class Role extends Model
      * relationships
      */
     public function users(){
-        return $this->hasMany('App\Models\User');
+        return $this->belongsToMany('App\Models\User')->withTimestamps();
     }
     public function permissions(){
-        return $this->hasMany('App\Models\Permission');
+        return $this->belongsToMany('App\Models\Permission')->withTimestamps();
     }
 }

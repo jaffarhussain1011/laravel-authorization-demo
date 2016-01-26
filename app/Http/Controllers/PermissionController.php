@@ -3,20 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class PermissionController extends Controller
-{
+class PermissionController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        return view('permissions.index',  ['permissions'=>\App\Models\Permission::paginate(15)]);
+    public function index() {
+        $this->authorize('index', new \App\Models\Permission);
+        return view('permissions.index', ['permissions' => \App\Models\Permission::paginate(15)]);
     }
 
     /**
@@ -24,8 +23,8 @@ class PermissionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
+        $this->authorize('create', new \App\Models\Permission);
         return view('permissions.create');
     }
 
@@ -35,9 +34,9 @@ class PermissionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(\App\Http\Requests\StorePermissionPostRequest $request)
-    {
-        $permission = \App\Models\Permission::create($request->only(['title','slug']));
+    public function store(\App\Http\Requests\StorePermissionPostRequest $request) {
+        $this->authorize('create', new \App\Models\Permission);
+        $permission = \App\Models\Permission::create($request->only(['title', 'slug']));
         return redirect(route('permission.index'));
     }
 
@@ -47,8 +46,7 @@ class PermissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         
     }
 
@@ -58,10 +56,10 @@ class PermissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function edit($id) {
         $permission = \App\Models\Permission::findOrFail($id);
-        return view('permissions.edit',['permission'=>$permission]);
+        $this->authorize('update', $permission);
+        return view('permissions.edit', ['permission' => $permission]);
     }
 
     /**
@@ -71,10 +69,10 @@ class PermissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(\App\Http\Requests\UpdatePermissionPostRequest $request, $id)
-    {
+    public function update(\App\Http\Requests\UpdatePermissionPostRequest $request, $id) {
         $permission = \App\Models\Permission::findOrFail($id);
-        $permission->fill($request->only(['title','slug']));
+        $this->authorize('update', $permission);
+        $permission->fill($request->only(['title', 'slug']));
         $permission->save();
         return redirect(route('permission.index'));
     }
@@ -85,10 +83,11 @@ class PermissionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id) {
         $permission = \App\Models\Permission::findOrFail($id);
+        $this->authorize('destroy', $permission);
         $permission->delete();
         return redirect(route('permission.index'));
     }
+
 }
