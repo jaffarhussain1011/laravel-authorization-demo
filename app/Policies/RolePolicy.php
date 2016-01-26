@@ -4,8 +4,8 @@ namespace App\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class RolePolicy
-{
+class RolePolicy {
+
     use HandlesAuthorization;
 
     /**
@@ -13,10 +13,10 @@ class RolePolicy
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         //
     }
+
     /**
      * Determine if user is admin then bypass all checks
      *
@@ -25,9 +25,9 @@ class RolePolicy
      * @return bool
      */
     public function before($user, $ability) {
-        if ($user->hasRole('admin')) {
-            return true;
-        }
+//        if ($user->hasRole('admin')) {
+//            return true;
+//        }
     }
 
     /**
@@ -36,10 +36,10 @@ class RolePolicy
      * @param  \App\User  $user
      * @return bool
      */
-    public function index(\App\Models\User $user, \App\Models\Role $role)
-    {
+    public function index(\App\Models\User $user, \App\Models\Role $role) {
         return $user->hasPermission('role.index');
     }
+
     /**
      * Determine if the given role can be created by the user.
      *
@@ -47,10 +47,10 @@ class RolePolicy
      * @param  \App\Model\Role  $role
      * @return bool
      */
-    public function create(\App\Models\User $user, \App\Models\Role $role)
-    {
+    public function create(\App\Models\User $user, \App\Models\Role $role) {
         return $user->hasPermission('role.create');
     }
+
     /**
      * Determine if the given role can be updated by the user.
      *
@@ -58,10 +58,10 @@ class RolePolicy
      * @param  \App\Model\Role  $role
      * @return bool
      */
-    public function update(\App\Models\User $user, \App\Models\Role $role)
-    {
+    public function update(\App\Models\User $user, \App\Models\Role $role) {
         return $user->hasPermission('role.update');
     }
+
     /**
      * Determine if the given role can be destroyed by the user.
      *
@@ -69,8 +69,8 @@ class RolePolicy
      * @param  \App\Model\Role  $role
      * @return bool
      */
-    public function destroy(\App\Models\User $user, \App\Models\Role $role)
-    {
+    public function destroy(\App\Models\User $user, \App\Models\Role $role) {
         return $user->hasPermission('role.destroy');
     }
+
 }

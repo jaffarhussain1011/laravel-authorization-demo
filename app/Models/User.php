@@ -12,9 +12,20 @@ class User extends BaseUserClass {
 
     public function hasPermission($slug) {
         $return = false;
-        foreach ($this->roles as $role) {
-            if (in_array($slug, $role->permissions()->lists('slug', 'id')->toArray())) {
+        $roles = $this->load('roles.permissions')->roles;
+        foreach ($roles as $role) {
+            if ($return) {
+                break;
+            }
+            if ($role->slug == $slug) {
                 $return = true;
+                break;
+            }
+            foreach ($role->permissions as $permission) {
+                if ($permission->slug == $slug) {
+                    $return = true;
+                    break;
+                }
             }
         }
         return $return;
